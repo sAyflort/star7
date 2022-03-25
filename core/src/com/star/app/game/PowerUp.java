@@ -18,6 +18,7 @@ public class PowerUp implements Poolable {
     private GameController gc;
     private Vector2 position;
     private Vector2 velocity;
+    private Vector2 tempVec;
     private float time;
     private boolean active;
     private Type type;
@@ -56,6 +57,7 @@ public class PowerUp implements Poolable {
         this.gc = gc;
         this.position = new Vector2(0, 0);
         this.velocity = new Vector2(0, 0);
+        this.tempVec = new Vector2();
         this.active = false;
     }
 
@@ -75,5 +77,12 @@ public class PowerUp implements Poolable {
         if (time >= 7.0f) {
             deactivate();
         }
+    }
+
+    public void magToPos(Vector2 ObPosition, float speed) {
+        tempVec.set(ObPosition.x, ObPosition.y);
+        tempVec.mulAdd(position, -1);
+        tempVec.nor();
+        velocity.mulAdd(tempVec, speed);
     }
 }
