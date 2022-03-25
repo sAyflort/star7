@@ -37,6 +37,8 @@ public class Hero {
     private int hpMax;
     private StringBuilder sb;
     private Circle hitArea;
+    private Circle pUArea;
+    private float forceMag;
     private Weapon currentWeapon;
     private int money;
     private Shop shop;
@@ -83,6 +85,14 @@ public class Hero {
         return angle;
     }
 
+    public Circle getPUArea() {
+        return pUArea;
+    }
+
+    public float getForceMag() {
+        return forceMag;
+    }
+
     public boolean isAlive() {
         return hp > 0;
     }
@@ -98,6 +108,8 @@ public class Hero {
         this.hp = hpMax;
         this.sb = new StringBuilder();
         this.hitArea = new Circle(position, 28);
+        this.pUArea = new Circle(position, 200);
+        this.forceMag = enginePower/2;
         this.money = 1000;
         this.shop = new Shop(this);
         createWeapons();
@@ -230,6 +242,7 @@ public class Hero {
 
         }
         position.mulAdd(velocity, dt);
+        pUArea.setPosition(position);
         hitArea.setPosition(position);
         float stopKoef = 1.0f - dt;
         if (stopKoef < 0.0f) {

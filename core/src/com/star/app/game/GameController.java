@@ -13,6 +13,7 @@ public class GameController {
     private AsteroidController asteroidController;
     private ParticleController particleController;
     private PowerUpsController powerUpsController;
+    private int lvl;
     private Hero hero;
     private Vector2 tempVec;
     private Stage stage;
@@ -56,12 +57,6 @@ public class GameController {
         this.stage = new Stage(ScreenManager.getInstance().getViewport(), batch);
         this.stage.addActor(hero.getShop());
         Gdx.input.setInputProcessor(stage);
-
-        for (int i = 0; i < 3; i++) {
-            asteroidController.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH),
-                    MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
-                    MathUtils.random(-150, 150), MathUtils.random(-150, 150), 1.0f);
-        }
     }
 
     public void update(float dt) {
@@ -72,14 +67,15 @@ public class GameController {
         powerUpsController.update(dt);
         hero.update(dt);
         stage.act(dt);
-        checkCollisions();
+        checkCollisions(dt);
+        spawnAsteroid();
         if(!hero.isAlive()){
             ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAMEOVER, hero);
         }
     }
 
 
-    public void checkCollisions() {
+    public void checkCollisions(float dt) {
         //столкновение астероидов и героя
         for (int i = 0; i < asteroidController.getActiveList().size(); i++) {
             Asteroid a = asteroidController.getActiveList().get(i);
@@ -97,7 +93,7 @@ public class GameController {
                 if (a.takeDamage(2)) {
                     hero.addScore(a.getHpMax() * 50);
                 }
-                hero.takeDamage(2);
+                hero.takeDamage(a.getDamage());
             }
         }
 
@@ -133,6 +129,21 @@ public class GameController {
                 hero.consume(pu);
                 particleController.getEffectBuilder().takePowerUpsEffect(pu);
                 pu.deactivate();
+                continue;
+            }
+            if (hero.getPUArea().contains(pu.getPosition())) {
+                pu.magToPos(hero.getPosition(), hero.getForceMag()*(dt));
+            }
+        }
+    }
+
+    public void spawnAsteroid() {
+        if (asteroidController.getActiveList().size() == 0) {
+            lvl++;
+            for (int i = 0; i < 3; i++) {
+                asteroidController.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH),
+                        MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
+                        MathUtils.random(-150, 150), MathUtils.random(-150, 150), 1.0f, 10*lvl, 2*lvl);
             }
         }
     }

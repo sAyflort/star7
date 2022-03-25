@@ -17,6 +17,7 @@ public class Asteroid implements Poolable {
     private boolean active;
     private int hpMax;
     private int hp;
+    private int damage;
     private float angle;
     private float rotationSpeed;
     private Circle hitArea;
@@ -31,6 +32,10 @@ public class Asteroid implements Poolable {
 
     public int getHpMax() {
         return hpMax;
+    }
+
+    public int getDamage() {
+        return damage;
     }
 
     public Circle getHitArea() {
@@ -87,12 +92,13 @@ public class Asteroid implements Poolable {
         hitArea.setPosition(position);
     }
 
-    public void activate(float x, float y, float vx, float vy, float scale) {
+    public void activate(float x, float y, float vx, float vy, float scale, int hpLvl, int damageLvl) {
         position.set(x, y);
         velocity.set(vx, vy);
         active = true;
-        hpMax = (int) (10 * scale);
+        hpMax = (int) (hpLvl * scale);
         hp = hpMax;
+        damage = (int) (damageLvl * scale);
         angle = MathUtils.random(0.0f, 360.0f);
         rotationSpeed = MathUtils.random(-180.0f, 180.0f);
         hitArea.setPosition(x, y);
@@ -106,11 +112,11 @@ public class Asteroid implements Poolable {
             deactivate();
             if (scale > 0.41f) {
                 gc.getAsteroidController().setup(position.x, position.y,
-                        MathUtils.random(-150, 150), MathUtils.random(-150, 150), scale - 0.3f);
+                        MathUtils.random(-150, 150), MathUtils.random(-150, 150), scale - 0.3f, (int) (hpMax*(scale-0.3f)), damage);
                 gc.getAsteroidController().setup(position.x, position.y,
-                        MathUtils.random(-150, 150), MathUtils.random(-150, 150), scale - 0.3f);
+                        MathUtils.random(-150, 150), MathUtils.random(-150, 150), scale - 0.3f, (int) (hpMax*(scale-0.3f)), damage);
                 gc.getAsteroidController().setup(position.x, position.y,
-                        MathUtils.random(-150, 150), MathUtils.random(-150, 150), scale - 0.3f);
+                        MathUtils.random(-150, 150), MathUtils.random(-150, 150), scale - 0.3f, (int) (hpMax*(scale-0.3f)), damage);
             }
             return true;
         } else {
